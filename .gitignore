@@ -1,0 +1,9 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Admin-uploaded images (keep the seeded design images only)
+/public/uploads/*
+!/public/uploads/DL-Learning-1.jpg
+!/public/uploads/DL-Technology.jpg
+!/public/uploads/DL-Communication.jpg

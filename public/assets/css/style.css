@@ -1,0 +1,452 @@
+/* =========================================================================
+   DelphianLogic in Action — section styles
+   Tokens taken from files/Moodboard.xlsx (styleguide).
+   ========================================================================= */
+
+:root {
+  /* Brand palette */
+  --brand-primary: #c4351e;
+  --brand-secondary: #11324d;
+  --brand-third: #f0b91e;
+  --brand-fourth: #64b4c8;
+  --brand-fifth: #504682;
+  --brand-sixth: #2fb1fc;
+
+  /* Greys */
+  --gray-darker: #2e3439;
+  --gray-dark: #424242;
+  --gray: #696969;
+  --gray-light: #adadad;
+  --gray-lighter: #d4d3d8;
+  --gray-white: #f6f6f6;
+  --white: #ffffff;
+  --black: #000000;
+
+  /* Semantic */
+  --brand-success: #56bd5b;
+  --brand-info: #0099fa;
+  --brand-warning: #f7b422;
+  --brand-danger: #e34c4c;
+
+  /* Fonts */
+  --font-body: 'Open Sans', sans-serif;
+  --font-head: 'Titillium Web', sans-serif;
+
+  /* Font sizes (desktop) */
+  --fs-smallest: 12px;
+  --fs-smaller: 13px;
+  --fs-small: 14px;
+  --fs-base: 16px;
+  --fs-big: 18px;
+  --fs-large: 20px;
+  --fs-larger: 24px;
+  --fs-largest: 28px;
+  --fs-huge: 34px;
+
+  /* Radius scale */
+  --br-3: 3px;
+  --br-5: 5px;
+  --br-6: 6px;
+  --br-10: 10px;
+
+  /* Gaps / padding scale (subset used) */
+  --gap-3: 15px;
+  --gap-5: 25px;
+  --gap-8: 50px;
+}
+
+/* ---- Section shell ---- */
+/* keep the standalone demo page from ending in an abrupt white strip */
+body {
+  background: var(--brand-secondary);
+}
+
+.dl-section {
+  background: var(--brand-secondary);
+  font-family: var(--font-body);
+  color: var(--white);
+  padding: var(--gap-8) 0;
+}
+
+.dl-head {
+  text-align: center;
+  margin-bottom: var(--gap-5);
+}
+
+.dl-head__title {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: var(--fs-huge);
+  margin: 0 0 10px;
+  color: var(--white);
+}
+
+.dl-head__subtitle {
+  font-size: var(--fs-base);
+  color: var(--gray-light);
+  margin: 0 auto;
+  max-width: 520px;
+}
+
+/* =========================================================================
+   Desktop layout (>= 768px): CSS grid.
+   Column 1 = tab headers; the active panel fills column 2 and itself splits
+   into the content slider (col 2) + image slider (col 3).
+   ========================================================================= */
+.dl-widget {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  /* Explicit equal rows (one per tab) are set inline via --tab-count so the
+     panel's `grid-row: 1 / -1` can span them all. Falls back to 1 row.
+     Plain 1fr (min = content) lets the grid grow to the tallest item — e.g. the
+     square col 3 — so col 1 and col 2 stretch to the same height. */
+  grid-template-rows: repeat(var(--tab-count, 1), 1fr);
+  border-radius: var(--br-3);
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+/* display:contents lets each item's header + panel participate in the grid */
+.dl-item {
+  display: contents;
+}
+
+/* ---- Column 1: tab headers ---- */
+.dl-tab {
+  grid-column: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  border: 0;
+  text-align: left;
+  background: var(--gray-white);
+  color: var(--brand-secondary);
+  padding: 20px 22px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--gray-lighter);
+  transition: background 0.2s ease;
+  font-family: var(--font-body);
+  /* tabs are buttons — never let a click select the label text */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.dl-tab:focus {
+  outline: none;
+}
+.dl-tab:focus-visible {
+  outline: 2px solid var(--brand-fourth);
+  outline-offset: -2px;
+}
+
+.dl-item:last-child .dl-tab {
+  border-bottom: 0;
+}
+
+.dl-tab:hover {
+  background: var(--white);
+}
+
+.dl-item.is-active .dl-tab {
+  background: var(--white);
+}
+
+.dl-tab__icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  object-fit: contain;
+}
+
+.dl-tab__name {
+  font-size: var(--fs-base);
+  font-weight: 600;
+}
+
+/* +/- toggle: only used in the mobile accordion */
+.dl-tab__toggle {
+  display: none;
+  margin-left: auto;
+  width: 24px;
+  height: 24px;
+}
+.dl-tab__toggle img {
+  width: 24px;
+  height: 24px;
+}
+.dl-tab__toggle .icon-minus { display: none; }
+.dl-item.is-active .dl-tab__toggle .icon-minus { display: inline; }
+.dl-item.is-active .dl-tab__toggle .icon-plus { display: none; }
+
+/* Notch pointing from the active tab into the panel (desktop) */
+.dl-item.is-active .dl-tab::after {
+  content: '';
+  position: absolute;
+  right: -11px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-top: 11px solid transparent;
+  border-bottom: 11px solid transparent;
+  border-left: 11px solid var(--brand-fourth);
+  z-index: 3;
+}
+
+/* ---- Columns 2 + 3: the panel ---- */
+.dl-panel {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  /* All panels stay in layout and overlap in the same grid cell, so the widget
+     height is driven by the TALLEST tab and stays constant when switching.
+     Inactive panels are hidden visually but still reserve their size. */
+  display: flex;
+  flex-direction: row;
+  min-height: 280px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.dl-item.is-active .dl-panel {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  z-index: 2;
+}
+
+/* Column 2 — content slider (teal). height:100% makes the teal fill the grid
+   cell so its bottom lines up with the square col 3 and the tab column. */
+.dl-content {
+  flex: 1 1 55%;
+  min-width: 0;
+  height: 100%;
+  background: var(--brand-fourth);
+  position: relative;
+}
+
+.dl-slide {
+  position: relative;
+  min-height: 280px;
+  outline: none;
+}
+
+.dl-slide__inner {
+  position: relative;
+  z-index: 2;
+  padding: 36px 40px 56px;
+}
+
+/* Background layer — hidden on desktop, used on mobile */
+.dl-slide__bg {
+  display: none;
+}
+
+.dl-pill {
+  display: inline-block;
+  background: rgba(46, 52, 57, 0.55);
+  color: var(--white);
+  font-size: var(--fs-smaller);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: var(--br-3);
+  margin-bottom: 18px;
+}
+
+.dl-title {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: var(--fs-largest);
+  line-height: 1.25;
+  color: var(--white);
+  margin: 0 0 22px;
+}
+
+.dl-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--white);
+  font-weight: 600;
+  font-size: var(--fs-small);
+  text-decoration: none;
+}
+.dl-more:hover { color: var(--white); opacity: 0.85; }
+.dl-more__arrow {
+  width: 18px;
+  height: 18px;
+  /* arrow svg is black by default — make it white */
+  filter: brightness(0) invert(1);
+}
+
+/* Column 3 — image slider.
+   On the true desktop design (>= 992px) it is an exact 1:1 square (see the
+   media query below). In the narrow 768–991px band it simply fills the column
+   height (cover), which is robust regardless of how long a title is. */
+.dl-images {
+  flex: 0 0 44%;
+  min-width: 0;
+  background: var(--gray-darker);
+}
+.dl-image {
+  outline: none;
+  height: 100%;
+}
+.dl-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Full desktop (>= 1200px — Bootstrap's xl, container 1140px, i.e. the mockup's
+   width): render col 3 as an exact 1:1 square. The square is WIDTH-driven —
+   width comes from the flex-basis (a fraction of the definite panel width) and
+   aspect-ratio derives the height. align-self:flex-start keeps the flex row from
+   stretching its height (which would override the ratio); the teal content
+   column stretches to match, so all three columns stay level.
+   Below 1200px the container is narrower and a long title can exceed the square,
+   so col 3 falls back to filling the column height (base rule) — no gap. */
+@media (min-width: 1200px) {
+  .dl-images {
+    align-self: flex-start;
+    aspect-ratio: 1 / 1;
+  }
+}
+
+/* ---- Slick dots (attached to the content slider only) ---- */
+.dl-content .slick-dots {
+  position: absolute;
+  bottom: 18px;
+  left: 0;
+  right: 0;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+}
+.dl-content .slick-dots li {
+  width: auto;
+  height: auto;
+  margin: 0;
+}
+.dl-content .slick-dots li button {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+}
+.dl-content .slick-dots li button:before {
+  display: none;
+}
+.dl-content .slick-dots li.slick-active button {
+  background: var(--white);
+}
+
+/* keep slick tracks full-height so the teal/image fill the row */
+.dl-content .slick-list,
+.dl-content .slick-track,
+.dl-images .slick-list,
+.dl-images .slick-track {
+  height: 100%;
+}
+
+/* =========================================================================
+   Tablet band (768–991px): Bootstrap's container is a fixed 720px here, so the
+   3-column layout is tight. Narrow col 1 so col 2 has more room; col 3 fills the
+   column height (see base rules) rather than forcing a square in cramped space.
+   ========================================================================= */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .dl-widget {
+    grid-template-columns: 210px minmax(0, 1fr);
+  }
+  .dl-tab {
+    padding: 16px 16px;
+    gap: 10px;
+  }
+}
+
+/* =========================================================================
+   Mobile layout (< 768px): accordion + background-image slider.
+   ========================================================================= */
+@media (max-width: 767.98px) {
+  .dl-section { padding: 30px 0; }
+  .dl-head__title { font-size: 30px; }
+
+  .dl-widget {
+    display: block;
+    border-radius: 0;
+    overflow: visible;
+    box-shadow: none;
+  }
+
+  .dl-item {
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .dl-tab {
+    border-radius: var(--br-5);
+    border-bottom: 0;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+  }
+  .dl-tab__toggle { display: inline-flex; }
+  /* no desktop notch on mobile */
+  .dl-item.is-active .dl-tab::after { display: none; }
+
+  /* Accordion body: hidden unless the item is open */
+  .dl-panel {
+    display: none;
+    flex-direction: column;
+    margin-top: 12px;
+    border-radius: var(--br-5);
+    overflow: hidden;
+    position: relative;
+  }
+  .dl-item.is-active .dl-panel { display: block; }
+
+  /* small upward notch linking the open header to the panel */
+  .dl-item.is-active .dl-panel::before {
+    content: '';
+    position: absolute;
+    top: -9px;
+    left: 38px;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid var(--brand-fourth);
+    z-index: 4;
+  }
+
+  .dl-content { flex: none; width: 100%; }
+
+  /* Column 3 images are not a separate column on mobile */
+  .dl-images { display: none; }
+
+  /* Each content slide now shows the image as a darkened background */
+  .dl-slide__bg {
+    display: block;
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+  }
+  .dl-slide__bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(17, 50, 77, 0.55), rgba(17, 50, 77, 0.7));
+  }
+  .dl-slide__inner { padding: 30px 28px 56px; min-height: 240px; }
+
+  .dl-content .slick-dots {
+    left: 0;
+    right: 0;
+    justify-content: center;
+  }
+}
